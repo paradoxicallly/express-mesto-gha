@@ -14,10 +14,14 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then(user => res.send({ user }))
+    .then(user =>{
+      if(user === null) {
+        res.status(objectNotFoundErrorStatus).send({ message: "Пользователь по указанному _id не найден" })
+      } else res.send({ user })
+    })
     .catch(err => {
       if (err.name === "CastError") {
-        res.status(objectNotFoundErrorStatus).send({ message: "Пользователь по указанному _id не найден" })
+        res.status(incorrectDataErrorStatus).send({ message: "Некорекктный _id пользователя" })
       } else res.status(defaultErrorStatus).send({ message: defaultErrorMessage })
     });
 };

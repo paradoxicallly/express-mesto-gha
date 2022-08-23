@@ -26,10 +26,14 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then(card => res.send({ data: card }))
+  .then(card =>{
+    if(card === null) {
+      res.status(objectNotFoundErrorStatus).send({ message: "Передан несуществующий _id карточки." })
+    } else res.send({ data: card })
+  })
     .catch(err => {
       if (err.name === "CastError") {
-        res.status(objectNotFoundErrorStatus).send({ message: "Карточка с указанным _id не найдена." })
+        res.status(incorrectDataErrorStatus).send({ message: "Некорректный _id карточки" })
       } else res.status(defaultErrorStatus).send({ message: defaultErrorMessage })
     });
 };
@@ -38,10 +42,15 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },)
-    .then(card => res.send({ data: card }))
-    .catch(err => {
-      if (err.name === "CastError") {
+    .then(card =>{
+      if(card === null) {
         res.status(objectNotFoundErrorStatus).send({ message: "Передан несуществующий _id карточки." })
+      } else res.send({ data: card })
+    })
+    .catch(err => {
+      console.log(err.name)
+      if (err.name === "CastError") {
+        res.status(incorrectDataErrorStatus).send({ message: "Некорректный _id карточки" })
       }
       else if (err.name === "ValidationError") {
         res.status(incorrectDataErrorStatus).send({ message: "Переданы некорректные данные для постановки лайка" })
@@ -55,13 +64,18 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-  .then(card => res.send({ data: card }))
-  .catch(err => {
-    if (err.name === "CastError") {
+  .then(card =>{
+    if(card === null) {
       res.status(objectNotFoundErrorStatus).send({ message: "Передан несуществующий _id карточки." })
+    } else res.send({ data: card })
+  })
+  .catch(err => {
+    console.log(err.name)
+    if (err.name === "CastError") {
+      res.status(incorrectDataErrorStatus).send({ message: "Некорректный _id карточки" })
     }
     else if (err.name === "ValidationError") {
-      res.status(incorrectDataErrorStatus).send({ message: "Переданы некорректные данные для снятии лайка" })
+      res.status(incorrectDataErrorStatus).send({ message: "Переданы некорректные данные для постановки лайка" })
     } else res.status(defaultErrorStatus).send({ message: defaultErrorMessage })
   });
 };
