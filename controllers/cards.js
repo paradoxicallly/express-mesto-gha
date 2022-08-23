@@ -48,7 +48,6 @@ module.exports.likeCard = (req, res) => {
       } else res.send({ data: card })
     })
     .catch(err => {
-      console.log(err.name)
       if (err.name === "CastError") {
         res.status(incorrectDataErrorStatus).send({ message: "Некорректный _id карточки" })
       }
@@ -70,7 +69,6 @@ module.exports.dislikeCard = (req, res) => {
     } else res.send({ data: card })
   })
   .catch(err => {
-    console.log(err.name)
     if (err.name === "CastError") {
       res.status(incorrectDataErrorStatus).send({ message: "Некорректный _id карточки" })
     }
