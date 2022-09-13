@@ -1,4 +1,4 @@
-module.exports = (err, req, res, next) => {
+module.exports = (err, req, res) => {
   // если у ошибки нет статуса, выставляем 500
   const { statusCode = 500, message } = err;
 
@@ -10,5 +10,4 @@ module.exports = (err, req, res, next) => {
         ? 'На сервере произошла ошибка'
         : message,
     });
-  console.log('Ошибка в финальном middleware');
 };
