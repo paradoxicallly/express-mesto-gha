@@ -4,6 +4,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictDataError = require('../errors/conflict-data-error');
+const AuthError = require('../errors/auth-error');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -103,8 +104,9 @@ module.exports.login = (req, res, next) => {
       res.send({ token });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Ошибка авторизации. Email или пароль введены неправильно'));
+      console.log(err.name);
+      if (err.name === 'Error') {
+        next(new AuthError('Ошибка авторизации. Email или пароль введены неправильно'));
       }
       next(err);
     });
