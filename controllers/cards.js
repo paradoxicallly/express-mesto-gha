@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
+const NoPermission = require('../errors/no-permission');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -25,7 +26,7 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (card.owner !== req.user._id) {
-        next(new BadRequestError('Нет прав для данной операции'));
+        next(new NoPermission('Нет прав для данной операции'));
       } else {
         Card.deleteOne(card._id);
       }

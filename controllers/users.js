@@ -23,7 +23,12 @@ module.exports.getUserById = (req, res, next) => {
       if (user === null) {
         throw new NotFoundError('Пользователь по указанному _id не найден');
       } else res.send({ user });
-    }).catch(next);
+    }).catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Некорекктный _id пользователя'));
+      }
+      next(err);
+    });
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -97,5 +102,10 @@ module.exports.login = (req, res, next) => {
       // вернём токен
       res.send({ token });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Ошибка авторизации. Email или пароль введены неправильно'));
+      }
+      next(err);
+    });
 };
