@@ -25,20 +25,15 @@ module.exports.createCard = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
-      if (card.owner !== req.user._id) {
+      if (card.owner.toString() !== req.user._id) {
         next(new NoPermission('Нет прав для данной операции'));
       } else {
-        Card.deleteOne(card._id);
+        Card.findByIdAndRemove(card._id);
       }
     })
-    .then((card) => {
-      if (card === null) {
-        throw new NotFoundError('Передан несуществующий _id карточки.');
-      } else res.send({ data: card });
-    })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Некорректный _id карточки'));
+      if (err.name === 'TypeError') {
+        next(new NotFoundError('Передан несуществующий _id карточки.'));
       }
       next(err);
     });
