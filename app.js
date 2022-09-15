@@ -34,7 +34,7 @@ app.post('/signin', celebrate({
 }), login);
 
 // авторизация
-app.use(auth);
+// app.use(auth);
 
 // роуты, которым авторизация нужна
 app.use('/cards', require('./routes/cards'));
