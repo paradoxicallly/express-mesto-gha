@@ -28,7 +28,8 @@ module.exports.deleteCard = (req, res, next) => {
       if (card.owner.toString() !== req.user._id) {
         next(new NoPermission('Нет прав для данной операции'));
       } else {
-        Card.findByIdAndRemove(card._id);
+        Card.findByIdAndRemove(req.params.cardId)
+          .catch(next);
       }
     })
     .catch((err) => {
