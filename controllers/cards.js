@@ -29,6 +29,9 @@ module.exports.deleteCard = (req, res, next) => {
         next(new NoPermission('Нет прав для данной операции'));
       } else {
         Card.findByIdAndRemove(req.params.cardId)
+          .then(() => {
+            res.send({ message: 'Карточка удалена' });
+          })
           .catch(next);
       }
     })
