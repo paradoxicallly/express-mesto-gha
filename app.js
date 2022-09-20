@@ -5,7 +5,7 @@ const { errors, Joi, celebrate } = require('celebrate');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const errorsHandler = require('./middlewares/errorsHandler');
-const AuthError = require('./errors/auth-error');
+const NotFoundError = require('./errors/not-found-error');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -46,7 +46,7 @@ app.use(errors());
 
 // обработка роутов
 app.use('*', (req, res, next) => {
-  next(new AuthError('Роут не найден'));
+  next(new NotFoundError('Роут не найден'));
 });
 
 // обработка ошибок
